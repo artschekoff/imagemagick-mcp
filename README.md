@@ -2,6 +2,11 @@
 
 Minimal MCP server that wraps ImageMagick for crop/resize workflows. It can resize to an exact target size and, when the aspect ratio differs, it can pad with a blurred background, crop-to-cover, or contain with black padding.
 
+**Author:** [roxl.net](https://roxl.net)
+
+## Example
+![ImageMagick MCP example](images/imagemagick-mcp.png)
+
 ## What It Does
 - Resizes images to exact dimensions
 - Supports three modes when aspect ratios differ:
