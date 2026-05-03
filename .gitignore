@@ -8,6 +8,7 @@ __pycache__/
 # Plans and agent configs
 docs/superpowers/plans/
 agents/
+.serena
 
 # Rulesync
 .rulesync
