@@ -1,46 +1,57 @@
 # ImageMagick MCP Server
 
-Minimal MCP server that wraps ImageMagick for crop/resize workflows. It can resize to an exact target size and, when the aspect ratio differs, it can pad with a blurred background, crop-to-cover, or contain with black padding.
+Minimal MCP server that wraps ImageMagick for crop/resize workflows. Written in Go.
 
 **Author:** [roxl.net](https://roxl.net)
 
-## Example
-![ImageMagick MCP example](images/imagemagick-mcp.png)
-
 ## What It Does
+
 - Resizes images to exact dimensions
-- Supports three modes when aspect ratios differ:
-  - `blur`: blurred background from the source image
+- Three modes when aspect ratios differ:
+  - `blur`: blurred background from the source image (default)
   - `cover`: crop to fill (no padding)
   - `contain`: fit inside with black padding
 - Exposes a single MCP tool: `crop_resize_blur_bg`
 
+## Requirements
+
+- Go 1.22+ (to build)
+- ImageMagick with `magick` in PATH (`brew install imagemagick`)
+
 ## Quick Start
-1. Install dependencies:
 
 ```bash
-python3 -m pip install -r skills/imagemagick-mcp/scripts/requirements.txt
+# Build
+make build
+
+# Register the binary in your MCP client
+# Binary: bin/imagemagick-mcp
 ```
 
-2. Ensure ImageMagick is installed and `magick` is in your `PATH`.
+## MCP Tool: `crop_resize_blur_bg`
 
-3. Start the server:
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `input_path` | string | yes | — | Absolute path to source image |
+| `output_path` | string | yes | — | Absolute path for output |
+| `width` | number | yes | — | Target width in pixels |
+| `height` | number | yes | — | Target height in pixels |
+| `mode` | string | no | `blur` | `blur`, `cover`, or `contain` |
+| `blur` | number | no | `30` | Blur radius (blur mode only) |
+
+## Makefile Targets
+
+| Target | Description |
+|--------|-------------|
+| `make build` | Build for current platform → `bin/imagemagick-mcp` |
+| `make build-all` | Cross-compile for darwin/linux/windows (amd64 + arm64) |
+| `make test` | Run all tests |
+| `make clean` | Remove `bin/` |
+| `make release` | Build all + create GitHub release (requires `gh`) |
+
+## Release
 
 ```bash
-python3 skills/imagemagick-mcp/scripts/server.py
+git tag v1.2.0
+make release
 ```
-
-## MCP Tool
-- `crop_resize_blur_bg`
-  - Required: `input_path`, `output_path`, `width`, `height`
-  - Optional: `mode` (`blur|cover|contain`, default `blur`)
-  - Optional: `blur` (default `30`, only used in `blur` mode)
-
-## Notes
-- If the source aspect ratio matches the target, the image is resized directly.
-- Output directories are created automatically.
-- The server runs with MCP stdio transport.
-
-## Files
-- Skill definition: `skills/imagemagick-mcp/SKILL.md`
-- Server implementation: `skills/imagemagick-mcp/scripts/server.py`
