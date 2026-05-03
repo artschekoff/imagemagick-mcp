@@ -16,7 +16,47 @@ Minimal MCP server that wraps ImageMagick for crop/resize workflows. Written in 
 ## Requirements
 
 - Go 1.22+ (to build)
-- ImageMagick with `magick` in PATH (`brew install imagemagick`)
+- ImageMagick (`magick` must be in PATH)
+
+### Installing ImageMagick
+
+**macOS**
+```bash
+brew install imagemagick
+```
+
+**Ubuntu / Debian**
+```bash
+sudo apt update && sudo apt install imagemagick
+```
+
+**Fedora / RHEL / CentOS**
+```bash
+sudo dnf install imagemagick
+```
+
+**Arch Linux**
+```bash
+sudo pacman -S imagemagick
+```
+
+**Windows**
+Download the installer from [imagemagick.org/script/download.php](https://imagemagick.org/script/download.php) and check **"Add application directory to your system path"** during install.
+
+Or with Chocolatey:
+```powershell
+choco install imagemagick
+```
+
+Or with Winget:
+```powershell
+winget install ImageMagick.ImageMagick
+```
+
+Verify installation:
+```bash
+magick --version
+```
 
 ## Quick Start
 
