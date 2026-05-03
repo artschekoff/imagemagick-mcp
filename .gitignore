@@ -106,3 +106,7 @@ rulesync.local.jsonc
 **/.warp/
 **/WARP.md
 .rulesynclist
+
+# Plans and AI agent files
+docs/superpowers/plans/
+agents/

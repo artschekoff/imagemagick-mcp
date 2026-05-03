@@ -1,4 +1,0 @@
-interface:
-  display_name: "ImageMagick MCP"
-  short_description: "Crop/resize with blurred padding"
-  default_prompt: "Resize/crop an image to target dimensions with blurred background padding when needed."
