@@ -29,18 +29,17 @@ ImageMagick must be installed separately with `magick` available in `PATH`.
 
 ## Architecture
 
-This is a single-file MCP server (`scripts/server.py`) built with `FastMCP`. It exposes two tools:
+Single Go package at the repo root exposes two MCP tools via `github.com/mark3labs/mcp-go` and shells out to the `magick` CLI. Runs with stdio transport.
 
-- `describe_imagemagick_interface` — returns server metadata
-- `crop_resize_blur_bg` — the main tool: resizes an image to exact `width`×`height`
+**Files:**
+- `main.go` — entry point, injects `version` at build time
+- `server.go` — MCP server init, tool registration (`describe_imagemagick_interface`, `crop_resize_blur_bg`), and request handlers
+- `imagemagick.go` — shells out to `magick`: `identifySize`, `ratioClose`, `cropResizeBlurBg`, `runMagick`
+- `imagemagick_test.go` — unit tests for `ratioClose`; integration tests for all three resize modes (skip if `magick` absent)
 
-The server shells out to `magick` (ImageMagick CLI) for all image operations. No image data passes through Python — only paths and subprocess calls.
-
-### Resize logic in `crop_resize_blur_bg`
-
-1. Reads source dimensions via `magick identify`.
-2. If aspect ratios match (within 1% tolerance) **or** `mode=cover`: resize+crop with `-resize WxH^ -gravity center -extent WxH`.
-3. `mode=contain`: resize to fit with `-resize WxH`, then extend canvas with black padding.
-4. `mode=blur` (default, aspect mismatch): composites the source (fit inside) over a blurred, cover-cropped version of itself as background — requires a three-layer `magick` command using parenthesized clone operations.
-
-The server runs with `mcp.run(transport="stdio")` — it is consumed by MCP clients that spawn it as a subprocess.
+**Resize logic in `cropResizeBlurBg`:**
+1. Validates input exists, creates output dir, validates mode and dimensions
+2. Reads source size via `magick identify`
+3. If aspect ratios match (within 1%) or `mode=cover`: resize+crop with `^` and extent
+4. `mode=contain`: resize to fit + black padding
+5. `mode=blur` (default, aspect mismatch): composites source over a blurred cover-cropped background
