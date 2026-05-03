@@ -32,7 +32,8 @@ install: build
 	sudo cp $(BIN_DIR)/$(BINARY) /usr/local/bin/$(BINARY)
 
 release:
-	@current=$$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0"); \
+	@set -e; \
+	current=$$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0"); \
 	echo "Current version: $$current"; \
 	printf "Bump type? [major/minor/patch] (default: patch): "; \
 	read bump; \
@@ -48,6 +49,7 @@ release:
 	esac; \
 	new="v$${major}.$${minor}.$${patch}"; \
 	echo "Tagging and releasing $$new..."; \
-	git tag $$new && git push origin $$new; \
+	git tag $$new; \
+	git push origin $$new; \
 	$(MAKE) pack VERSION=$$new; \
 	gh release create $$new $(DIST_DIR)/* --generate-notes --title "Release $$new"
