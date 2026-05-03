@@ -42,11 +42,15 @@ func runMagick(args ...string) error {
 
 func cropResizeBlurBg(inputPath, outputPath string, width, height int, mode string, blurRadius int) error {
 	if _, err := os.Stat(inputPath); err != nil {
-		return fmt.Errorf("input not found: %s", inputPath)
+		return fmt.Errorf("input not found: %w", err)
 	}
 
 	if err := os.MkdirAll(filepath.Dir(outputPath), 0o755); err != nil {
 		return fmt.Errorf("create output dir: %w", err)
+	}
+
+	if width <= 0 || height <= 0 {
+		return fmt.Errorf("width and height must be positive, got %dx%d", width, height)
 	}
 
 	mode = strings.ToLower(strings.TrimSpace(mode))

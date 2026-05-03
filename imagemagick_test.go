@@ -33,14 +33,13 @@ func TestRatioClose(t *testing.T) {
 }
 
 func TestModeValidation(t *testing.T) {
-	requireMagick(t)
 	tmp := t.TempDir()
 	src := filepath.Join(tmp, "src.png")
-	if err := exec.Command("magick", "-size", "100x100", "xc:white", src).Run(); err != nil {
-		t.Fatalf("create test image: %v", err)
+	if err := os.WriteFile(src, []byte("dummy"), 0o644); err != nil {
+		t.Fatalf("create dummy file: %v", err)
 	}
 	dst := filepath.Join(tmp, "out.png")
-	err := cropResizeBlurBg(src, dst, 200, 200, "invalid", 30)
+	err := cropResizeBlurBg(src, dst, 100, 100, "invalid", 30)
 	if err == nil {
 		t.Fatal("expected error for invalid mode, got nil")
 	}
@@ -126,6 +125,21 @@ func TestCropResizeBlurBg_CoverMode(t *testing.T) {
 	}
 	if w != 100 || h != 100 {
 		t.Errorf("expected 100x100, got %dx%d", w, h)
+	}
+}
+
+func TestCropResizeBlurBg_ZeroDimension(t *testing.T) {
+	tmp := t.TempDir()
+	src := filepath.Join(tmp, "src.png")
+	if err := os.WriteFile(src, []byte("dummy"), 0o644); err != nil {
+		t.Fatalf("create dummy file: %v", err)
+	}
+	dst := filepath.Join(tmp, "out.png")
+	if err := cropResizeBlurBg(src, dst, 0, 100, "blur", 30); err == nil {
+		t.Fatal("expected error for zero width")
+	}
+	if err := cropResizeBlurBg(src, dst, 100, 0, "blur", 30); err == nil {
+		t.Fatal("expected error for zero height")
 	}
 }
 
