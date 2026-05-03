@@ -20,5 +20,8 @@ test:
 clean:
 	rm -rf $(BIN_DIR)
 
+install: build
+	sudo cp $(BIN_DIR)/$(BINARY) /usr/local/bin/$(BINARY)
+
 release: build-all
 	gh release create $(VERSION) $(BIN_DIR)/* --generate-notes --title "Release $(VERSION)"
